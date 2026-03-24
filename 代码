@@ -1,0 +1,39 @@
+热图代码（Figure 1）
+df <- read.csv("your_data.csv")
+
+df2 <- df %>%
+  select(Nmin, MAT, SOC, Microbial, Clay) %>%
+  na.omit()
+
+df_scaled <- scale(df2)
+
+cor_matrix <- cor(df_scaled)
+
+corrplot(cor_matrix,
+         method = "color",
+         type = "upper",
+         order = "hclust",
+         addCoef.col = "black",
+         tl.col = "black")
+散点加回归代码Figure 2）
+ggplot(df2, aes(x = MAT, y = Nmin)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw()ggplot(df2, aes(x = Microbial, y = Nmin)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw()
+多变量回归结果图（Figure 3）
+model <- lm(Nmin ~ MAT + SOC + Microbial + Clay, data = df2)
+
+summary(model)
+箱线图Figure 6）
+sem_model <- '
+Nmin ~ Microbial + SOC + MAT
+Microbial ~ SOC + MAT
+SOC ~ MAT
+'
+
+fit <- sem(sem_model, data = df_scaled)
+
+summary(fit, standardized = TRUE)
